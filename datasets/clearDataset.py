@@ -1,8 +1,8 @@
 import pandas as pd
 
-df = pd.read_excel("Dundee_not_Clean.xlsx")
-output = "Dundee_Clean.xlsx"
+df = pd.read_csv("Dataset_not_Clean.csv")
 
+df.dropna()  # Delete rows with NaN values
 dfClean = pd.DataFrame(
     columns=["connectorType", "cost", "energy", "tariff", "durationCharge", "durationSession", "meanPower", "maxPower",
              "anomaly", "class",
@@ -11,72 +11,80 @@ dfClean = pd.DataFrame(
              ])
 
 for index, session in df.iterrows():
+    # Get Data by Row
+    session = session.to_dict()
+    durationCharge = session["durationCharge"]
+    durationSession = session["durationSession"]
+    maxPower = session["maxPower"]
+    energy = session["energy"]
+    tariff = session["tariff"]
+    cost = session["cost"]
+    meanPower = session["meanPower"]
+    yearStart = session["yearStart"]
 
-    object = session.to_dict()
-    durationCharge = object["durationCharge"]
-    durationSession = object["durationSession"]
-    maxPower = object["maxPower"]
-    energy = object["energy"]
-    tariff = object["tariff"]
-    cost = object["cost"]
-    meanPower = object["meanPower"]
+    if yearStart <= 2017:  # Filter to transactions more recent
+        continue
 
     # Anomalies of duration
     if durationCharge < 0:
-        object["class"] = "DurationChargeNegative"
-        object["anomaly"] = 1
+        session["class"] = "DurationChargeNegative"
+        session["anomaly"] = 1
     if durationSession < 0:
-        object["class"] = "DurationSessionNegative"
-        object["anomaly"] = 1
+        session["class"] = "DurationSessionNegative"
+        session["anomaly"] = 1
     if durationSession < durationCharge:
-        object["class"] = "DurationSessionLessThanDurationCharge"
-        object["anomaly"] = 1
+        session["class"] = "DurationSessionLessThanDurationCharge"
+        session["anomaly"] = 1
 
     if durationCharge >= 100:
-        object["class"] = "DurationChargeTooLong"
-        object["anomaly"] = 1
+        session["class"] = "DurationChargeTooLong"
+        session["anomaly"] = 1
 
     if durationSession > 168:
-        object["class"] = "DurationSessionTooLong"
-        object["anomaly"] = 1
+        session["class"] = "DurationSessionTooLong"
+        session["anomaly"] = 1
 
     # Anomalies of Energy
     if energy < 0:
-        object["class"] = "EnergyNegative"
-        object["anomaly"] = 1
+        session["class"] = "EnergyNegative"
+        session["anomaly"] = 1
 
     if 0 <= energy <= 0.2 and durationCharge >= 3:
-        object["class"] = "NotCharge"
-        object["anomaly"] = 1
+        session["class"] = "NotCharge"
+        session["anomaly"] = 1
 
     if tariff < 0:
-        object["class"] = "TariffNegative"
-        object["anomaly"] = 1
+        session["class"] = "TariffNegative"
+        session["anomaly"] = 1
     if tariff >= 4:
-        object["class"] = "TariffExcessive"
-        object["anomaly"] = 1
+        session["class"] = "TariffExcessive"
+        session["anomaly"] = 1
 
     if cost < 0:
-        object["class"] = "CostNegative"
-        object["anomaly"] = 1
+        session["class"] = "CostNegative"
+        session["anomaly"] = 1
     if cost > 100:
-        object["class"] = "CostExcessive"
-        object["anomaly"] = 1
+        session["class"] = "CostExcessive"
+        session["anomaly"] = 1
 
     if meanPower < 0:
-        object["class"] = "MeanPowerNegative"
-        object["anomaly"] = 1
+        session["class"] = "MeanPowerNegative"
+        session["anomaly"] = 1
 
     if meanPower > maxPower:
-        object["class"] = "MeanPowerExcessive"
-        object["anomaly"] = 1
+        session["class"] = "MeanPowerExcessive"
+        session["anomaly"] = 1
 
     if maxPower > 22 and 0 < meanPower < 0.01:
-        object["class"] = "MeanPowerTooLow"
-        object["anomaly"] = 1
+        session["class"] = "MeanPowerTooLow"
+        session["anomaly"] = 1
 
-    series = pd.Series(object)
+    series = pd.Series(session)
     row_df = pd.DataFrame([series])
     dfClean = pd.concat([row_df, dfClean], ignore_index=True)
 
-dfClean.to_excel(output, index=False)
+dfClean.to_csv("Dataset_With_Anomalies.csv", index=False)
+
+dfClean = dfClean[dfClean['anomaly'] == 0]
+dfClean.drop(['anomaly', 'class'], axis=1, inplace=True)
+dfClean.to_csv("Dataset_Clean.csv", index=False)

@@ -1,8 +1,6 @@
-import math
 import random
 import pandas as pd
 import datetime
-import json
 
 df = pd.read_csv("boulder_usa.csv")
 
@@ -14,15 +12,15 @@ newDF = pd.DataFrame(
              ])
 
 for index, session in df.iterrows():
-    object = session.to_dict()
+    session_object = session.to_dict()
 
     # Get Data
     connectorType = "Fast"
     maxPower = 7.4
-    energy = float(object["Energy__kWh_"])
+    energy = float(session_object["Energy__kWh_"])
     # Time: Convert string to float
-    hc, mc, sc = object["Charging_Time__hh_mm_ss_"].split(':')
-    hs, ms, ss = object["Total_Duration__hh_mm_ss_"].split(':')
+    hc, mc, sc = session_object["Charging_Time__hh_mm_ss_"].split(':')
+    hs, ms, ss = session_object["Total_Duration__hh_mm_ss_"].split(':')
     durationCharge = round(int(hc) + float(int(mc) / 60.0) + float(int(sc) / 3600.0), 2)
     durationSession = round(int(hs) + float(int(ms) / 60.0) + float(int(ss) / 3600.0), 2)
     meanPower = 0.0
@@ -31,10 +29,10 @@ for index, session in df.iterrows():
     # Get Info
     city = "Boulder"
     country = "USA"
-    startDate = object["Start_Date___Time"]
-    endDate = object["End_Date___Time"]
-    startTimezone = object["Start_Time_Zone"]
-    endTimezone = object["End_Time_Zone"]
+    startDate = session_object["Start_Date___Time"]
+    endDate = session_object["End_Date___Time"]
+    startTimezone = session_object["Start_Time_Zone"]
+    endTimezone = session_object["End_Time_Zone"]
 
     startTz = "-0600"
     if startTimezone == "MST":
@@ -49,6 +47,9 @@ for index, session in df.iterrows():
     hourStart = startDateObject.hour
     minuteStart = startDateObject.minute
     startTimestamp = startDateObject.timestamp()
+
+    if yearStart <= 2018:  # Filter to transactions more recent
+        continue
 
     endTz = "-0600"
     if endTimezone == "MST":

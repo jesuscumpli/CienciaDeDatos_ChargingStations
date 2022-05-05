@@ -1,13 +1,8 @@
-import math
-import random
-
 import pandas as pd
 import datetime
-import json
-import numpy as np
-
 
 df = pd.read_csv('./cpdata-enero-junio-2021.csv')
+
 
 newDF = pd.DataFrame(
     columns=["connectorType", "cost", "energy", "tariff", "durationCharge", "durationSession", "meanPower", "maxPower",
@@ -17,8 +12,6 @@ newDF = pd.DataFrame(
              ])
 
 for index, session in df.iterrows():
-
-    object = {}
     session = session.to_dict()
     connectorType = ""
     energy = session["Total kWh"]

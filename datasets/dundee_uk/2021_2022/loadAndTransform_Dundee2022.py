@@ -1,11 +1,6 @@
-import math
-import random
-
 import pandas as pd
 import datetime
-import json
 from pymongo import MongoClient
-import numpy as np
 
 client = MongoClient("mongodb://localhost:27017/?readPreference=primary&appname=MongoDB%20Compass&ssl=false")
 db = client.chargingEVSE_V4
@@ -22,7 +17,6 @@ newDF = pd.DataFrame(
              ])
 
 for index, session in df.iterrows():
-
     object = {}
     session = session.to_dict()
     connectorType = session["Connector Type"]

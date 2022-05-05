@@ -57,7 +57,7 @@ for index, session in df.iterrows():
     minuteStart = startDateObject.minute
     startTimestamp = startDateObject.timestamp()
 
-    if yearStart <= 2017:  # Filter to transactions more recent
+    if yearStart <= 2018:  # Filter to transactions more recent
         continue
 
     endTz = "-0600"
