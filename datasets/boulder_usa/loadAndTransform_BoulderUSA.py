@@ -86,12 +86,13 @@ for index, session in df.iterrows():
     newObject["meanPower"] = meanPower
     newObject["maxPower"] = maxPower
 
-    newObject["startDate"] = startDateObject.strftime("%d/%m/%Y %H:%M:%S%z")
-    newObject["startTimestamp"] = startTimestamp
-    newObject["weekDayStart"] = weekDayStart
-    newObject["yearStart"] = yearStart
-    newObject["hourStart"] = hourStart
-    newObject["minuteStart"] = minuteStart
+    newObject["start.startDate"] = startDateObject.strftime("%d/%m/%Y %H:%M:%S%z")
+    newObject["start.startDate"] = startDateObject.strftime("%d/%m/%Y %H:%M:%S%z")
+    newObject["start.startTimestamp"] = startTimestamp
+    newObject["start.weekDayStart"] = weekDayStart
+    newObject["start.yearStart"] = yearStart
+    newObject["start.hourStart"] = hourStart
+    newObject["start.minuteStart"] = minuteStart
 
     newObject["endDate"] = endDateObject.strftime("%d/%m/%Y %H:%M:%S%z")
     newObject["endTimestamp"] = endTimestamp
